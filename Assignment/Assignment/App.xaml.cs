@@ -169,7 +169,7 @@ namespace Assignment
 
             _timer.Stop();
 
-            //_viewModel.SelectedGame = null; // kezdetben nincsen kiválasztott elem
+            _viewModel.SelectedGame = null; // kezdetben nincsen kiválasztott elem
             _viewModel.NewName = String.Empty;
 
             _saveWindow = new SaveWindow(); // létrehozzuk a játék állapot mentő ablakot

@@ -69,9 +69,10 @@
     <Compile Include="Data\Field.cs" />
     <Compile Include="Data\Game.cs" />
     <Compile Include="Data\IData.cs" />
+    <Compile Include="Data\IDataGame.cs" />
     <Compile Include="Data\SaveEntry.cs" />
-    <Compile Include="Data\SudokuContext.cs" />
-    <Compile Include="Data\SudokuDbDataAccess.cs" />
+    <Compile Include="Data\Context.cs" />
+    <Compile Include="Data\DbDataAccess.cs" />
     <Compile Include="ViewModel\BaseButton.cs" />
     <Compile Include="ViewModel\DelegateCommand.cs" />
     <Compile Include="ViewModel\ViewModel.cs" />

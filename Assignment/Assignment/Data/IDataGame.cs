@@ -7,13 +7,15 @@ using System.Threading.Tasks;
 
 namespace Assignment.Data
 {
-    public interface IData
+    public interface IDataGame
     {
+
         /// <summary>
         /// Fájl betöltése.
         /// </summary>
         /// <param name="path">Elérési útvonal.</param>
-        ModelValues Load(String path);
+        Task<ModelValues> LoadAsync(String name);
+        //ModelValues Load(String path);
 
 
         /// <summary>
@@ -21,6 +23,7 @@ namespace Assignment.Data
         /// </summary>
         /// <param name="path">Elérési útvonal.</param>
         /// <param name="model">A fájlba kiírandó model.</param>
-        void Save(String path, GameControlModel model);
+        Task SaveAsync(String name, GameControlModel table);
+        //void Save(String path, GameControlModel model);
     }
 }

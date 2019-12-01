@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assignment.Model;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -21,17 +22,18 @@ namespace ELTE.Windows.Sudoku.Persistence
 	    /// </summary>
 		public Int32 TableSize { get; set; }
 
-	    /// <summary>
-	    /// Házak mérete.
-	    /// </summary>
-		public Int32 RegionSize { get; set; }
-
         /// <summary>
         /// Mentés időpontja.
         /// </summary>
         public DateTime Time { get; set; }
 
         public int GameTime { get; set; }
+        public double DifficultyTime { get; set; }
+
+        public Position Player { get; set; }
+
+        public ModelValues GameValues { get; set; }
+
 
         /// <summary>
         /// Játékmezők.
