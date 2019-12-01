@@ -1,4 +1,5 @@
 ﻿using Assignment.Model;
+using ELTE.Windows.Sudoku.Persistence;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace Assignment.ViewModel
         #region Fields
 
         private GameControlModel _model; // modell
-        //private SaveEntry _selectedGame;
+        private SaveEntry _selectedGame;
         private String _newName = String.Empty;
 
         //TableLayoutPanel table;
@@ -94,7 +95,7 @@ namespace Assignment.ViewModel
         /// </summary>
         public int GameTime { get { return _model.gameTime; } }
 
-        /*
+        
         /// <summary>
         /// Perzisztens játékállapot mentések lekérdezése.
         /// </summary>
@@ -117,7 +118,7 @@ namespace Assignment.ViewModel
                 SaveGameCloseCommand.RaiseCanExecuteChanged();
             }
         }
-        */
+        
 
         /// <summary>
         /// Új játék mentés nevének lekérdezése.
@@ -248,10 +249,10 @@ namespace Assignment.ViewModel
             // parancsok kezelése
 
             NewGameCommand = new DelegateCommand(param => OnNewGame());
-            /*
+            
             LoadGameOpenCommand = new DelegateCommand(async param =>
             {
-                Games = new ObservableCollection<SaveEntry>(await _model.ListGamesAsync());
+                //Games = new ObservableCollection<SaveEntry>(await _model.ListGamesAsync());
                 OnLoadGameOpen();
             });
             LoadGameCloseCommand = new DelegateCommand(
@@ -259,13 +260,13 @@ namespace Assignment.ViewModel
                 param => { OnLoadGameClose(SelectedGame.Name); });
             SaveGameOpenCommand = new DelegateCommand(async param =>
             {
-                Games = new ObservableCollection<SaveEntry>(await _model.ListGamesAsync());
+                //Games = new ObservableCollection<SaveEntry>(await _model.ListGamesAsync());
                 OnSaveGameOpen();
             });
             SaveGameCloseCommand = new DelegateCommand(
                 param => NewName.Length > 0, // parancs végrehajthatóságának feltétele
                 param => { OnSaveGameClose(NewName); });
-            */
+            
             ExitCommand = new DelegateCommand(param => OnExitGame());
 
             // játéktábla létrehozása
@@ -356,6 +357,8 @@ namespace Assignment.ViewModel
         void OnLoadGameEvent(object sender, LoadGameEvent e)
         {
             RefreshTable();
+            player.SetPosition(e.PlayerX, e.PlayerY);
+            Fields[e.PlayerY * _mapSize + e.PlayerX].Background = playerColor;
         }
 
        

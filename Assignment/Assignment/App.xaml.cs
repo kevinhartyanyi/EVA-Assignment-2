@@ -57,7 +57,7 @@ namespace Assignment
             IData dataAccess;
             dataAccess = new Assignment.Data.Data();
             //dataAccess = new SudokuFileDataAccess(AppDomain.CurrentDomain.BaseDirectory); // fájl alapú mentés
-            //dataAccess = new SudokuDbDataAccess("name=SudokuModel"); // adatbázis alapú mentés
+            //dataAccess = new GameDbDataAccess("name=SudokuModel"); // adatbázis alapú mentés
 
 
             // modell létrehozása
@@ -130,7 +130,7 @@ namespace Assignment
 
             _timer.Stop();
 
-            //TODO _viewModel.SelectedGame = null; // kezdetben nincsen kiválasztott elem
+            _viewModel.SelectedGame = null; // kezdetben nincsen kiválasztott elem
 
             _loadWindow = new LoadWindow(); // létrehozzuk a játék állapot betöltő ablakot
             _loadWindow.DataContext = _viewModel;
