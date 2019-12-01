@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -42,6 +43,17 @@ namespace Assignment.ViewModel
 
         #region Properties
 
+        public bool EndOfGame { get; private set; }
+
+        public DelegateCommand LeftMove { get; private set; }
+        public DelegateCommand RightMove { get; private set; }
+        public DelegateCommand UpMove { get; private set; }
+        public DelegateCommand DownMove { get; private set; }
+
+        public DelegateCommand PauseGame { get; private set; }
+        public DelegateCommand StartGame { get; private set; }
+
+
         /// <summary>
         /// Új játék kezdése parancs lekérdezése.
         /// </summary>
@@ -75,7 +87,7 @@ namespace Assignment.ViewModel
         /// <summary>
         /// Játékmező gyűjtemény lekérdezése.
         /// </summary>
-        public ObservableCollection<BaseButton> Fields { get; set; }
+        public ObservableCollection<Button> Fields { get; set; }
 
         /// <summary>
         /// Játékidő lekérdezése.
@@ -192,23 +204,46 @@ namespace Assignment.ViewModel
             _model.bombCreate += new EventHandler<BombCreateEvent>(OnBombCreateEvent);
             _model.playerMove += new EventHandler<PlayerMoveEvent>(OnPlayerMoveEvent);
 
+            EndOfGame = false;
+
             player = new Position();
             ships = new List<Elem>();
             bombs = new List<Elem>();
 
-            baseColor = Brushes.Green;
+            baseColor = Brushes.White;
             shipColor = Brushes.Red;
             playerColor = Brushes.Blue;
             lightBombColor = Brushes.Violet;
             mediumBombColor = Brushes.BlueViolet;
             heavyBombColor = Brushes.DarkViolet;
-            _mapSize = 5;
+            _mapSize = 6;
             shipNumber = 2;
 
-            //this.KeyPreview = true;
-            //this.KeyDown += new KeyEventHandler(OnKeyDownEvent);
+            LeftMove = new DelegateCommand((_) => {
+                if (_model.isPlaying)
+                    _model.PlayerMove(Move.Left);
+            });
+            RightMove = new DelegateCommand((_) =>
+            {
+                if (_model.isPlaying)
+                    _model.PlayerMove(Move.Right);
+            });
+            UpMove = new DelegateCommand((_) => {
+                if (_model.isPlaying)
+                    _model.PlayerMove(Move.Up);
+            });
+            DownMove = new DelegateCommand((_) =>
+            {
+                if (_model.isPlaying)
+                    _model.PlayerMove(Move.Down);
+            });
 
-            
+            PauseGame = new DelegateCommand((_) => OnGameStopEvent());
+            StartGame = new DelegateCommand((_) => OnGameStartEvent());
+
+
+
+
 
             // parancsok kezelése
 
@@ -234,7 +269,7 @@ namespace Assignment.ViewModel
             ExitCommand = new DelegateCommand(param => OnExitGame());
 
             // játéktábla létrehozása
-            Fields = new ObservableCollection<BaseButton>();
+            Fields = new ObservableCollection<Button>();
             /*
             for (int i = 0; i < _mapSize; i++)
             {
@@ -251,19 +286,14 @@ namespace Assignment.ViewModel
             {
                 for (Int32 j = 0; j < _mapSize; j++)
                 {
-                    Fields.Add(new BaseButton(baseColor)
-                    {
-                        X = i,
-                        Y = j,
-                        Number = i * _mapSize + j, // a gomb sorszáma, amelyet felhasználunk az azonosításhoz
-                    });
+                    Fields.Add(new Button());
                 }
             }
 
             RefreshTable();
             _model.NewGame(_mapSize, _mapSize - 1, _mapSize - 1, shipNumber);
             player.SetPosition(_mapSize - 1, _mapSize - 1);
-            Fields[player._x * _mapSize + player._y].Background = playerColor;
+            Fields[player._y * _mapSize + player._x].Background = playerColor;
             //elements[player._x, player._y].BackColor = playerColor;
 
         }
@@ -279,7 +309,7 @@ namespace Assignment.ViewModel
         /// </summary>
         private void RefreshTable()
         {
-            foreach (BaseButton field in Fields) // inicializálni kell a mezőket is
+            foreach (Button field in Fields) // inicializálni kell a mezőket is
             {
                 field.Background = baseColor;
             }
@@ -332,11 +362,11 @@ namespace Assignment.ViewModel
 
         void OnPlayerMoveEvent(object sender, PlayerMoveEvent e)
         {
-            Fields[player._x * _mapSize + player._y].Background = baseColor;
+            Fields[player._y * _mapSize + player._x].Background = baseColor;
             //elements[player._x, player._y].BackColor = baseColor;
             player._x = e.Position._x;
             player._y = e.Position._y;
-            Fields[player._x * _mapSize + player._y].Background = playerColor;
+            Fields[player._y * _mapSize + player._x].Background = playerColor;
             //elements[player._x, player._y].BackColor = playerColor;
         }
 
@@ -346,16 +376,14 @@ namespace Assignment.ViewModel
             var s = ships[find];
             System.Windows.Application.Current.Dispatcher.Invoke(() =>
             {
-                Console.WriteLine("Before ShipMove " + Fields[s.Position._x * _mapSize + s.Position._y].Background);
-                Fields[s.Position._x * _mapSize + s.Position._y].Background = baseColor;
+                Fields[s.Position._y * _mapSize + s.Position._x].Background = baseColor;
                 //elements[s.Position._x, s.Position._y].BackColor = baseColor;
                 s.Position = e.Position;
-                Fields[s.Position._x * _mapSize + s.Position._y].Background = shipColor;
-                Console.WriteLine("After ShipMove " + Fields[s.Position._x * _mapSize + s.Position._y].Background);
+                Fields[s.Position._y * _mapSize + s.Position._x].Background = shipColor;
 
                 //elements[s.Position._x, s.Position._y].BackColor = shipColor;
                 
-                OnPropertyChanged();
+                OnPropertyChanged("GameTime");
             });
 
         }
@@ -364,7 +392,7 @@ namespace Assignment.ViewModel
         {
             Elem elem = new Elem(e.Position, e.ID, Model.Type.Ship);
             ships.Add(elem);
-            Fields[elem.Position._x * _mapSize + elem.Position._y].Background = shipColor;
+            Fields[elem.Position._y * _mapSize + elem.Position._x].Background = shipColor;
             //elements[elem.Position._x, elem.Position._y].BackColor = shipColor;
         }
 
@@ -391,7 +419,7 @@ namespace Assignment.ViewModel
                 }
                 Elem elem = new Elem(e.Position, e.ID, bombType);
                 bombs.Add(elem);
-                Fields[elem.Position._x * _mapSize + elem.Position._y].Background = bombColor;
+                Fields[elem.Position._y * _mapSize + elem.Position._x].Background = bombColor;
                 //elements[elem.Position._x, elem.Position._y].BackColor = bombColor;
             });
         }
@@ -404,9 +432,9 @@ namespace Assignment.ViewModel
                     return;
                 int find = FindElem(bombs, e.ID);
                 var b = bombs[find];
-                if (Fields[b.Position._x * _mapSize + b.Position._y] == null)
+                if (Fields[b.Position._y * _mapSize + b.Position._x] == null)
                     return;
-                Fields[b.Position._x * _mapSize + b.Position._y].Background = baseColor;
+                Fields[b.Position._y * _mapSize + b.Position._x].Background = baseColor;
                 //elements[b.Position._x, b.Position._y].BackColor = baseColor;
                 b.Position = e.Position;
                 Brush bombColor = Brushes.Black;
@@ -423,7 +451,7 @@ namespace Assignment.ViewModel
                         break;
 
                 }
-                Fields[b.Position._x * _mapSize + b.Position._y].Background = bombColor;
+                Fields[b.Position._y * _mapSize + b.Position._x].Background = bombColor;
                 //elements[b.Position._x, b.Position._y].BackColor = bombColor;
             });
 
@@ -432,6 +460,7 @@ namespace Assignment.ViewModel
         void OnGameOverEvent(object sender, GameOverEvent e)
         {
             Console.WriteLine("GameOver");
+            EndOfGame = true;
             OnPropertyChanged("GameTime");
         }
 
@@ -441,24 +470,24 @@ namespace Assignment.ViewModel
             {
                 Console.WriteLine("Bomb Remove");
                 int ind = FindElem(bombs, e.ID);
-                Fields[bombs[ind].Position._x * _mapSize + bombs[ind].Position._y].Background = baseColor;
+                Fields[bombs[ind].Position._y * _mapSize + bombs[ind].Position._x].Background = baseColor;
                 //elements[bombs[ind].Position._x, bombs[ind].Position._y].BackColor = baseColor;
                 bombs.RemoveAt(ind);
             });
         }
 
-        void OnGameStopEvent(object sender, EventArgs e)
+        void OnGameStopEvent()
         {
-            if (_model.isPlaying)
+            if (_model.isPlaying && !EndOfGame)
             {
                 Console.WriteLine("Game Stop");
                 _model.StopGame();
             }
         }
 
-        void OnGameStartEvent(object sender, EventArgs e)
+        void OnGameStartEvent()
         {
-            if (!_model.isPlaying)
+            if (!_model.isPlaying && !EndOfGame)
             {
                 Console.WriteLine("Game Start");
                 _model.StartGame();
@@ -493,10 +522,11 @@ namespace Assignment.ViewModel
         {
             if (NewGame != null)
             {
+                EndOfGame = false;
                 RefreshTable();
                 _model.NewGame(_mapSize, _mapSize - 1, _mapSize - 1, shipNumber);
                 player.SetPosition(_mapSize - 1, _mapSize - 1);
-                Fields[player._x * _mapSize + player._y].Background = playerColor;
+                Fields[player._y * _mapSize + player._x].Background = playerColor;
                 //elements[player._x, player._y].BackColor = playerColor;
 
 

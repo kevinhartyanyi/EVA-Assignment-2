@@ -6,6 +6,12 @@
         xmlns:local="clr-namespace:Assignment"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding LeftMove}" Key="A"/>
+        <KeyBinding Command="{Binding RightMove}" Key="D"/>
+        <KeyBinding Command="{Binding UpMove}" Key="W"/>
+        <KeyBinding Command="{Binding DownMove}" Key="S"/>
+    </Window.InputBindings>
     <Grid x:Name="Table_Grid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -23,9 +29,8 @@
                 <MenuItem Header="Kilépés" Command="{Binding ExitCommand}" />
             </MenuItem>
             <MenuItem Header="Idő">
-                <MenuItem Header="Pause" IsCheckable="True" IsChecked="{Binding IsGameEasy}" />
-                <MenuItem Header="Continue" IsCheckable="True" IsChecked="{Binding IsGameMedium}" />
-                <MenuItem Header="Nehéz játék" IsCheckable="True" IsChecked="{Binding IsGameHard}" />
+                <MenuItem Header="Pause" Command="{Binding PauseGame}" />
+                <MenuItem Header="Continue" Command="{Binding StartGame}" />
             </MenuItem>
         </Menu>
         <ItemsControl Grid.Row="1" ItemsSource="{Binding Fields, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
@@ -33,7 +38,7 @@
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <!--a gombokat egy rácsba fűzzük fel-->
-                    <UniformGrid Rows="5" Columns="5" />
+                    <UniformGrid Rows="6" Columns="6" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemContainerStyle>

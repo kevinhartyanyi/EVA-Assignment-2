@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Assignment.ViewModel
 {
-    public class DelegateCommand
+    public class DelegateCommand : ICommand
     {
         private readonly Action<Object> _execute; // a tevékenységet végrehajtó lambda-kifejezés
         private readonly Func<Object, Boolean> _canExecute; // a tevékenység feltételét ellenőző lambda-kifejezés
