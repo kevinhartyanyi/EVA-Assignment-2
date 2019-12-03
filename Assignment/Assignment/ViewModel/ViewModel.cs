@@ -271,17 +271,7 @@ namespace Assignment.ViewModel
             ExitCommand = new DelegateCommand(param => OnExitGame());
 
             // játéktábla létrehozása
-            Fields = new ObservableCollection<Button>();
-            /*
-            for (int i = 0; i < _mapSize; i++)
-            {
-                for (int j = 0; j < _mapSize; j++)
-                {
-                    var baseElem = new BaseButton(baseColor);
-                    Fields[i, j] = baseElem;
-                    table.Controls.Add(baseElem, i, j);
-                }
-            }*/
+            Fields = new ObservableCollection<Button>();            
 
 
             for (Int32 i = 0; i < _mapSize; i++) // inicializáljuk a mezőket

@@ -39,8 +39,6 @@ namespace Assignment.Model
             _ships = new List<Ship>();
             _bombs = new List<Bomb>();
         }
-
-
         
     }
 }

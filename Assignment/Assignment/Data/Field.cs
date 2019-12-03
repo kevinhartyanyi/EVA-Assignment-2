@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assignment.Model;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace ELTE.Windows.Game.Persistence
@@ -26,6 +27,10 @@ namespace ELTE.Windows.Game.Persistence
 	    /// Tárolt érték.
 	    /// </summary>
 		public Int32 Value { get; set; }
+
+        public Int32 ShipCount { get; set; }
+
+        public Bomb_Type bType { get; set; }
 
         /// <summary>
         /// Kapcsolt játék.
