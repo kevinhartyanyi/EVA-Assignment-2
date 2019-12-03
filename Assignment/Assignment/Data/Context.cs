@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data.Entity;
 
-namespace ELTE.Windows.Sudoku.Persistence
+namespace ELTE.Windows.Game.Persistence
 {
     /// <summary>
     /// Adatbázis kontextus típusa.
@@ -9,12 +9,15 @@ namespace ELTE.Windows.Sudoku.Persistence
     /// <seealso cref="System.Data.Entity.DbContext" />
 	class GameContext : DbContext
 	{
-		public GameContext(String connection)
-			: base(connection)
+		public GameContext(String connection): base(connection)
 		{
+
 		}
 
+        public GameContext(): base()
+        { }
+
 		public DbSet<Game> Games { get; set; }
-		public DbSet<Field> Fields { get; set; }
+		//public DbSet<Field> Fields { get; set; }
 	}
 }

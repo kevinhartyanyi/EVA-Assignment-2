@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ELTE.Windows.Sudoku.Persistence
+namespace ELTE.Windows.Game.Persistence
 {
     /// <summary>
     /// Játékállapot mentés reprezentációja.

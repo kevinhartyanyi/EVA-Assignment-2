@@ -1,4 +1,5 @@
 ﻿using Assignment.Model;
+using ELTE.Windows.Game.Persistence;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,5 +26,10 @@ namespace Assignment.Data
         /// <param name="model">A fájlba kiírandó model.</param>
         Task SaveAsync(String name, GameControlModel table);
         //void Save(String path, GameControlModel model);
+
+        /// <summary>
+        /// Játékállapot mentések lekérdezése.
+        /// </summary>
+	    Task<ICollection<SaveEntry>> ListAsync();
     }
 }

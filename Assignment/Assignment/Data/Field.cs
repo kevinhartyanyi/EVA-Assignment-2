@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace ELTE.Windows.Sudoku.Persistence
+namespace ELTE.Windows.Game.Persistence
 {
     /// <summary>
     /// Mező entitás típusa.

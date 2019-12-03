@@ -1,5 +1,5 @@
 ﻿using Assignment.Model;
-using ELTE.Windows.Sudoku.Persistence;
+using ELTE.Windows.Game.Persistence;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -186,7 +186,7 @@ namespace Assignment.ViewModel
         #region Constructors
 
         /// <summary>
-        /// Sudoku nézetmodell példányosítása.
+        /// Game nézetmodell példányosítása.
         /// </summary>
         /// <param name="model">A modell típusa.</param>
         public GameViewModel(GameControlModel model)
@@ -260,7 +260,8 @@ namespace Assignment.ViewModel
                 param => { OnLoadGameClose(SelectedGame.Name); });
             SaveGameOpenCommand = new DelegateCommand(async param =>
             {
-                //Games = new ObservableCollection<SaveEntry>(await _model.ListGamesAsync());
+                OnGameStopEvent();
+                Games = new ObservableCollection<SaveEntry>(await _model.ListGamesAsync());
                 OnSaveGameOpen();
             });
             SaveGameCloseCommand = new DelegateCommand(
@@ -495,6 +496,10 @@ namespace Assignment.ViewModel
                 Console.WriteLine("Game Start");
                 _model.StartGame();
             }
+            else
+            {
+                Console.WriteLine("Can't Start Game");
+            }
         }
 
         void OnGameSaveEvent(object sender, EventArgs e)
@@ -543,7 +548,10 @@ namespace Assignment.ViewModel
         private void OnLoadGameOpen()
         {
             if (LoadGameOpen != null)
+            {
+                OnGameStopEvent();
                 LoadGameOpen(this, EventArgs.Empty);
+            }
         }
 
         /// <summary>
@@ -552,7 +560,18 @@ namespace Assignment.ViewModel
         private void OnLoadGameClose(String name)
         {
             if (LoadGameClose != null)
+            {
+                Console.WriteLine("Load Game Close");
                 LoadGameClose(this, name);
+            }
+        }
+
+        public void LoadGame(string name)
+        {
+            _model.LoadGame(name);
+            _model.StartGame();
+            EndOfGame = false;
+            //OnGameStartEvent();
         }
 
         /// <summary>
@@ -561,7 +580,10 @@ namespace Assignment.ViewModel
         private void OnSaveGameOpen()
         {
             if (SaveGameOpen != null)
+            {
+                OnGameStopEvent();
                 SaveGameOpen(this, EventArgs.Empty);
+            }
         }
 
         /// <summary>
@@ -570,7 +592,9 @@ namespace Assignment.ViewModel
         private void OnSaveGameClose(String name)
         {
             if (SaveGameClose != null)
+            {
                 SaveGameClose(this, name);
+            }
         }
 
         /// <summary>

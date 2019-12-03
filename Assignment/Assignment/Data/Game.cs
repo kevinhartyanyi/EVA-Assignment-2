@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace ELTE.Windows.Sudoku.Persistence
+namespace ELTE.Windows.Game.Persistence
 {
     /// <summary>
     /// Játék entitás típusa.
@@ -29,10 +29,8 @@ namespace ELTE.Windows.Sudoku.Persistence
 
         public int GameTime { get; set; }
         public double DifficultyTime { get; set; }
+        //public int ShipCount { get; set; }
 
-        public Position Player { get; set; }
-
-        public ModelValues GameValues { get; set; }
 
 
         /// <summary>

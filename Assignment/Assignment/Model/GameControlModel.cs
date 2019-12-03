@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Assignment.Data;
+using ELTE.Windows.Game.Persistence;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,6 +13,7 @@ namespace Assignment.Model
     public class GameControlModel
     {
         #region Fields
+        private IDataGame _dataAccess;
         private Timer _gameTimer;
         private int _gameTime;
         private int _mapSize;
@@ -185,16 +188,17 @@ namespace Assignment.Model
             }
         }       
 
-       public GameControlModel(Data.IData gcData)
+       public GameControlModel(Data.IData gcData, IDataGame access)
         {
+            _dataAccess = access;
             _gameTimer = new Timer(1000);
             _gameTimer.Elapsed += new ElapsedEventHandler(OnTimerElapsed);
             _ships = new List<Ship>();
             _rand = new Random();
             _bombs = new List<Bomb>();
+            _data = gcData;
             _difficultyTimer = new Timer(1000);
             _difficultyTimer.Elapsed += new ElapsedEventHandler(OnDifficultyTimerElapsed);
-            _data = gcData;
         }
 
         //Pause
@@ -219,6 +223,17 @@ namespace Assignment.Model
             {
                 b.Start();
             }
+        }
+
+        /// <summary>
+        /// Játék mentések lekérése.
+        /// </summary>
+        public async Task<ICollection<SaveEntry>> ListGamesAsync()
+        {
+            if (_dataAccess == null)
+                throw new InvalidOperationException("No data access is provided.");
+
+            return await _dataAccess.ListAsync();
         }
 
         public void NewGame(int mapSize, int playerX, int playerY, int shipNumber)
@@ -260,6 +275,8 @@ namespace Assignment.Model
 
         public void SaveGame(string fileName)
         {
+            _dataAccess.SaveAsync(fileName, this);
+            Console.WriteLine("Here");
             _data.Save(fileName, this);
         }
 

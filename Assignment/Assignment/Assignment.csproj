@@ -73,6 +73,7 @@
     <Compile Include="Data\SaveEntry.cs" />
     <Compile Include="Data\Context.cs" />
     <Compile Include="Data\DbDataAccess.cs" />
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ViewModel\BaseButton.cs" />
     <Compile Include="ViewModel\DelegateCommand.cs" />
     <Compile Include="ViewModel\ViewModel.cs" />

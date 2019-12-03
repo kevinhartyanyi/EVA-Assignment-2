@@ -6,10 +6,10 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ELTE.Windows.Sudoku.Persistence
+namespace ELTE.Windows.Game.Persistence
 {
     /// <summary>
-    /// Sudoku perzisztencia adatbáziskezelő típusa.
+    /// Game perzisztencia adatbáziskezelő típusa.
     /// </summary>
 	public class GameDbDataAccess : IDataGame
 	{
@@ -33,14 +33,13 @@ namespace ELTE.Windows.Sudoku.Persistence
         public async Task<ModelValues> LoadAsync(String name)
 		{
 			Game game = await _context.Games
-				.Include(g => g.Fields)
 				.SingleAsync(g => g.Name == name); // játék állapot lekérdezése
             ModelValues table = new ModelValues(); // játéktábla modell létrehozása
 
-			foreach (Field field in game.Fields) // mentett mezők feldolgozása
-			{
-				//table.SetValue(field.X, field.Y, field.Value, field.IsLocked);
-			}
+            table.mapSize = game.TableSize;
+				
+            table.difficultyTime = game.DifficultyTime;
+            table.gameTime = game.GameTime;
 
 			return table;
 			
@@ -54,9 +53,9 @@ namespace ELTE.Windows.Sudoku.Persistence
         /// <param name="table">A kiírandó játéktábla.</param>
         public async Task SaveAsync(String name, GameControlModel table)
 		{
+            Console.WriteLine("SAVE");
             // játékmentés keresése azonos névvel
-			Game overwriteGame = await _context.Games
-			    .Include(g => g.Fields)
+            Game overwriteGame = await _context.Games
 			    .SingleOrDefaultAsync(g => g.Name == name);
 			if (overwriteGame != null)
 			    _context.Games.Remove(overwriteGame); // törlés
@@ -69,31 +68,9 @@ namespace ELTE.Windows.Sudoku.Persistence
             dbGame.DifficultyTime = table.difficultyTime;
             dbGame.GameTime = table.gameTime;
 
-            dbGame.Player = new Position();
-            dbGame.Player._x = table.playerX;
-            dbGame.Player._y = table.playerY;
+            //dbGame.ShipCount = table.shipCount
 
-            dbGame.GameValues = new ModelValues();
-            Console.WriteLine("SAVE");
-
-
-            /*
-            for (Int32 i = 0; i < table.Size; ++i)
-			{
-				for (Int32 j = 0; j < table.Size; ++j)
-				{
-					Field field = new Field
-					{
-						X = i,
-						Y = j,
-						Value = table.GetValue(i, j),
-						IsLocked = table.IsLocked(i, j)
-					};
-					dbGame.Fields.Add(field);
-				}
-			} // mezők mentése*/
-
-			_context.Games.Add(dbGame); // mentés hozzáadása a perzisztálandó objektumokhoz
+            _context.Games.Add(dbGame); // mentés hozzáadása a perzisztálandó objektumokhoz
 			await _context.SaveChangesAsync(); // mentés az adatbázisba
 			
 		}
@@ -103,6 +80,7 @@ namespace ELTE.Windows.Sudoku.Persistence
 	    /// </summary>
 	    public async Task<ICollection<SaveEntry>> ListAsync()
 	    {
+            Console.WriteLine("SaveList");
 	        return await _context.Games
 	            .OrderByDescending(g => g.Time) // rendezés mentési idő szerint csökkenő sorrendben
 	            .Select(g => new SaveEntry {Name = g.Name, Time = g.Time}) // leképezés: Game => SaveEntry

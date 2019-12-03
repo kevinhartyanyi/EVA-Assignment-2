@@ -2,6 +2,7 @@
 using Assignment.Model;
 using Assignment.View;
 using Assignment.ViewModel;
+using ELTE.Windows.Game.Persistence;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -49,19 +50,21 @@ namespace Assignment
 
         private void App_Startup(object sender, StartupEventArgs e)
         {
+            IData data;
+            data = new Assignment.Data.Data();
             if (Debugger.IsAttached)
                 CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("en-US");
             // perzisztencia létrehozása
-            //ISudokuDataAccess dataAccess;
-            
-            IData dataAccess;
-            dataAccess = new Assignment.Data.Data();
-            //dataAccess = new SudokuFileDataAccess(AppDomain.CurrentDomain.BaseDirectory); // fájl alapú mentés
-            //dataAccess = new GameDbDataAccess("name=SudokuModel"); // adatbázis alapú mentés
+
+
+
+
+            IDataGame dataAccess;
+            dataAccess = new GameDbDataAccess("name=GameModel"); // adatbázis alapú mentés
 
 
             // modell létrehozása
-            _model = new GameControlModel(dataAccess);
+            _model = new GameControlModel(data, dataAccess);
             _model.gameOver += new EventHandler<GameOverEvent>(Model_GameOver);
             //_model.NewGame();
 
@@ -99,7 +102,7 @@ namespace Assignment
 
             _timer.Stop();
 
-            if (MessageBox.Show("Biztos, hogy ki akar lépni?", "Sudoku", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+            if (MessageBox.Show("Biztos, hogy ki akar lépni?", "Game", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
             {
                 e.Cancel = true; // töröljük a bezárást
 
@@ -149,7 +152,8 @@ namespace Assignment
             {
                 try
                 {
-                    _model.LoadGame(name);
+                    //_model.LoadGame(name);
+                    _viewModel.LoadGame(name);
                 }
                 catch
                 {
@@ -190,6 +194,7 @@ namespace Assignment
                 try
                 {                  
                     _model.SaveGame(name);
+                    Console.WriteLine("Sikeres Mentés");
                 }
                 catch
                 {
